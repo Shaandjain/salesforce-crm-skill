@@ -1,6 +1,6 @@
-# Salesforce CRM Manager — Claude Code Skill
+# Salesforce CRM Manager — Claude Desktop Skill
 
-A plug-and-play Claude Code skill that lets you manage your Salesforce CRM using natural language. Create leads, manage tasks, query clients by location, and more — all through conversation.
+A plug-and-play Claude Desktop skill that lets you manage your Salesforce CRM using natural language. Create leads, manage tasks, query clients by location, and more — all through conversation.
 
 ## What it does
 
@@ -13,30 +13,24 @@ A plug-and-play Claude Code skill that lets you manage your Salesforce CRM using
 
 ## How to install
 
-### Option A: Download and drop in (easiest)
+### Option A: Add as a Project
 
-1. Download the `.skill` file from the [Releases](../../releases) page
-2. Open **Claude Code** (the CLI)
-3. Drag and drop the `.skill` file into your Claude Code conversation, or run:
-   ```
-   claude install-skill /path/to/tp-salesforce-crm-manager.skill
-   ```
+1. Download or clone this repo
+2. Open **Claude Desktop** and create a new Project
+3. Add the contents of the `tp-salesforce-crm-manager/` folder as project knowledge — upload each `SKILL.md` file as a project file
 
-### Option B: Install from this repo
+### Option B: Copy into your filesystem
 
 1. Clone this repo or download it as a ZIP
-2. Copy the `tp-salesforce-crm-manager/` folder into your Claude Code skills directory:
-   ```
-   cp -r tp-salesforce-crm-manager/ ~/.claude/skills/tp-salesforce-crm-manager/
-   ```
-3. Restart Claude Code — the skill will be available immediately
+2. Copy the `tp-salesforce-crm-manager/` folder somewhere accessible on your machine
+3. In Claude Desktop, add the `SKILL.md` files as project knowledge so Claude can reference them during conversations
 
 ## Prerequisites
 
 This skill uses **Composio** to connect to Salesforce. You need:
 
 1. A **Composio** account with a Salesforce integration set up
-2. The Composio MCP server configured in your Claude Code settings (server name: `mcp-config-5-gpex`)
+2. The Composio MCP server configured in your Claude Desktop settings (`claude_desktop_config.json`), with server name `mcp-config-5-gpex`
 
 If you're using a different MCP server name, update the references in the SKILL.md files to match your setup.
 

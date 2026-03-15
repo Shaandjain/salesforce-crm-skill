@@ -1,7 +1,7 @@
 ---
 name: tp-salesforce-crm-manager
 description: |
-  Salesforce CRM management via Composio. Use this skill whenever the user asks to interact with Salesforce — creating leads, viewing tasks, creating tasks, updating task status, querying client data, finding clients by location or geography, running SOQL queries, or any CRM-related workflow. Trigger on mentions of "Salesforce", "CRM", "leads", "tasks", "SOQL", "pipeline", "my tasks", "create a lead", "add a lead", "update task status", "mark task complete", "clients near", "clients in", "event invites", "who lives near", or any request to read/write Salesforce data. Also trigger when the user says things like "what's on my plate", "show me my open tasks", "create a new lead", "I'm hosting an event in [city]", or "find clients within X miles". This skill should be used even for simple Salesforce lookups — it contains the exact tool slugs and parameter schemas needed to execute reliably without guessing.
+  Salesforce CRM management via Composio. Use this skill whenever the user asks to interact with Salesforce — creating leads, viewing tasks, creating tasks, updating task status, querying client data, finding clients by location or geography, running SOQL queries, or any CRM-related workflow. Trigger on mentions of "Salesforce", "CRM", "leads", "contacts", "tasks", "SOQL", "pipeline", "my tasks", "create a lead", "add a lead", "update task status", "mark task complete", "find contact", "update contact", "search contacts", "list contacts", "clients near", "clients in", "event invites", "who lives near", or any request to read/write Salesforce data. Also trigger when the user says things like "what's on my plate", "show me my open tasks", "create a new lead", "find contacts for [account]", "update their email", "I'm hosting an event in [city]", or "find clients within X miles". This skill should be used even for simple Salesforce lookups — it contains the exact tool slugs and parameter schemas needed to execute reliably without guessing.
 ---
 
 # Salesforce CRM Manager
@@ -52,7 +52,9 @@ This skill is organized into sub-skills for each core workflow:
 1. **[Create a Lead](create-lead/SKILL.md)** — Add new prospective clients to the pipeline
 2. **[Create a Task](create-task/SKILL.md)** — Create follow-ups, reminders, and action items
 3. **[Query Task Status](query-tasks/SKILL.md)** — View open tasks, check due dates, update or complete tasks
-4. **[Geographic Client Queries](geo-queries/SKILL.md)** — Find clients near a location for events or outreach
+4. **[Find Contacts](find-contacts/SKILL.md)** — Search and list contacts by name, email, account, or location
+5. **[Update a Contact](update-contact/SKILL.md)** — Edit contact details like email, phone, address, or title
+6. **[Geographic Client Queries](geo-queries/SKILL.md)** — Find clients near a location for events or outreach
 
 ---
 
@@ -68,6 +70,9 @@ This skill is organized into sub-skills for each core workflow:
 | Search tasks | `SALESFORCE_SEARCH_TASKS` | (all optional filters) |
 | Update task | `SALESFORCE_UPDATE_TASK` | `task_id` |
 | Complete task | `SALESFORCE_COMPLETE_TASK` | `task_id` |
+| Search contacts | `SALESFORCE_SEARCH_CONTACTS` | (all optional filters) |
+| Get single contact | `SALESFORCE_GET_CONTACT` | `contact_id` |
+| Update contact | `SALESFORCE_UPDATE_CONTACT` | `contact_id` |
 | Search accounts | `SALESFORCE_SEARCH_ACCOUNTS` | (all optional filters) |
 | List accounts | `SALESFORCE_LIST_ACCOUNTS` | (optional SOQL query) |
 | Run SOQL | `SALESFORCE_RUN_SOQL_QUERY` | `query` |

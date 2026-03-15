@@ -1,12 +1,12 @@
 ---
 name: tp-salesforce-crm-manager
 description: |
-  Salesforce CRM management via Composio for Twin Peaks Wealth advisors. Use for any Salesforce interaction: creating/searching leads, creating/querying/completing tasks, finding/updating contacts, geographic client queries, or running SOQL. Trigger on "Salesforce", "CRM", "leads", "contacts", "tasks", "SOQL", "pipeline", "create a lead", "my tasks", "find contact", "update contact", "clients near", "what's on my plate", or any CRM read/write request. Contains exact tool slugs and parameter schemas for reliable execution.
+  Salesforce CRM management via Composio for Twin Peaks Wealth advisors. Use for any Salesforce interaction: creating/searching/updating/deleting accounts, contacts, leads, and tasks, geographic client queries, or running SOQL. Trigger on "Salesforce", "CRM", "leads", "contacts", "accounts", "tasks", "SOQL", "pipeline", "create a lead", "my tasks", "find contact", "update contact", "clients near", "what's on my plate", or any CRM read/write request. Contains exact tool slugs and parameter schemas for reliable execution.
 ---
 
 # Twin Peaks Salesforce CRM Manager
 
-This skill enables reliable Salesforce CRM operations for Twin Peaks Wealth advisors through Composio's MCP integration. It covers six core workflows: **creating leads**, **creating tasks**, **querying task status**, **finding contacts**, **updating contacts**, and **geographic client queries**.
+This skill enables reliable Salesforce CRM operations for Twin Peaks Wealth advisors through Composio's MCP integration. It provides full CRUD operations across four Salesforce objects — **Accounts**, **Contacts**, **Leads**, and **Tasks** — plus geographic client queries and raw SOQL access.
 
 Every tool slug, parameter schema, and execution pattern is documented here so you never need to guess or search — just execute.
 
@@ -47,30 +47,246 @@ Parameters:
 
 ---
 
-## Quick Reference: Tool Slugs
+## Quick Reference: All Tool Slugs
 
+### Accounts
+| Action | Tool Slug | Key Required Params |
+|--------|-----------|-------------------|
+| Create account | `SALESFORCE_CREATE_ACCOUNT` | `Name` |
+| Search accounts | `SALESFORCE_SEARCH_ACCOUNTS` | (all optional filters) |
+| List accounts | `SALESFORCE_LIST_ACCOUNTS` | (optional SOQL query) |
+| Get single account | `SALESFORCE_GET_ACCOUNT` | `account_id` |
+| Update account | `SALESFORCE_UPDATE_ACCOUNT` | `account_id` |
+| Delete account | `SALESFORCE_DELETE_ACCOUNT` | `account_id` |
+
+### Contacts
+| Action | Tool Slug | Key Required Params |
+|--------|-----------|-------------------|
+| Create contact | `SALESFORCE_CREATE_CONTACT` | `LastName` |
+| Search contacts | `SALESFORCE_SEARCH_CONTACTS` | (all optional filters) |
+| Get single contact | `SALESFORCE_GET_CONTACT` | `contact_id` |
+| Update contact | `SALESFORCE_UPDATE_CONTACT` | `contact_id` |
+| Delete contact | `SALESFORCE_DELETE_CONTACT` | `contact_id` |
+
+### Leads
 | Action | Tool Slug | Key Required Params |
 |--------|-----------|-------------------|
 | Create lead | `SALESFORCE_CREATE_LEAD` | `LastName`, `Company` |
 | Search leads | `SALESFORCE_SEARCH_LEADS` | (all optional filters) |
 | Get single lead | `SALESFORCE_GET_LEAD` | `lead_id` |
 | Update lead | `SALESFORCE_UPDATE_LEAD` | `lead_id` |
+| Delete lead | `SALESFORCE_DELETE_LEAD` | `lead_id` |
+
+### Tasks
+| Action | Tool Slug | Key Required Params |
+|--------|-----------|-------------------|
 | Create task | `SALESFORCE_CREATE_TASK` | `subject` |
 | Search tasks | `SALESFORCE_SEARCH_TASKS` | (all optional filters) |
 | Update task | `SALESFORCE_UPDATE_TASK` | `task_id` |
 | Complete task | `SALESFORCE_COMPLETE_TASK` | `task_id` |
-| Search contacts | `SALESFORCE_SEARCH_CONTACTS` | (all optional filters) |
-| Get single contact | `SALESFORCE_GET_CONTACT` | `contact_id` |
-| Update contact | `SALESFORCE_UPDATE_CONTACT` | `contact_id` |
-| Search accounts | `SALESFORCE_SEARCH_ACCOUNTS` | (all optional filters) |
-| List accounts | `SALESFORCE_LIST_ACCOUNTS` | (optional SOQL query) |
+| Delete task | `SALESFORCE_DELETE_TASK` | `task_id` |
+
+### Other
+| Action | Tool Slug | Key Required Params |
+|--------|-----------|-------------------|
 | Run SOQL | `SALESFORCE_RUN_SOQL_QUERY` | `query` |
 
 ---
 
-## Workflow 1: Create a Lead
+## Accounts
 
-Use when a Twin Peaks advisor wants to add a new prospective client into the pipeline.
+### Create an account
+
+**Tool**: `SALESFORCE_CREATE_ACCOUNT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `Name` | string | **Yes** | Account name (e.g. "Kumar Family Trust") |
+| `Phone` | string | No | Phone number |
+| `Website` | string | No | Company website |
+| `Industry` | string | No | e.g. "Financial Services", "Technology" |
+| `BillingStreet` | string | No | Street address |
+| `BillingCity` | string | No | City |
+| `BillingState` | string | No | State/province |
+| `BillingPostalCode` | string | No | Zip code |
+| `BillingCountry` | string | No | Country |
+| `Description` | string | No | Account description/notes |
+| `Type` | string | No | "Customer", "Partner", "Prospect", etc. |
+| `custom_fields` | object | No | Custom field API names to values (keys end in `__c`) |
+
+**Example:**
+```json
+{
+  "Name": "Test 1",
+  "Type": "Prospect",
+  "BillingCity": "San Francisco",
+  "BillingState": "CA"
+}
+```
+
+**Response**: New Account ID at `response.data.id`.
+
+### Search accounts
+
+**Tool**: `SALESFORCE_SEARCH_ACCOUNTS`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | No | Partial match on account name |
+| `industry` | string | No | Partial match on industry |
+| `billing_city` | string | No | Partial match on city |
+| `billing_state` | string | No | Partial match on state |
+| `limit` | integer | No | Max results (default 50) |
+
+### Get a single account
+
+**Tool**: `SALESFORCE_GET_ACCOUNT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | **Yes** | Salesforce Account ID (prefix `001`) |
+
+### Update an account
+
+**Tool**: `SALESFORCE_UPDATE_ACCOUNT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | **Yes** | Salesforce Account ID (prefix `001`) |
+| `Name` | string | No | Updated account name |
+| `Phone` | string | No | Updated phone |
+| `Website` | string | No | Updated website |
+| `Industry` | string | No | Updated industry |
+| `BillingStreet` | string | No | Updated street |
+| `BillingCity` | string | No | Updated city |
+| `BillingState` | string | No | Updated state |
+| `BillingPostalCode` | string | No | Updated zip |
+| `BillingCountry` | string | No | Updated country |
+| `Description` | string | No | Updated description |
+| `custom_fields` | object | No | Custom field updates |
+
+Only include fields you want to change — omitted fields are left untouched.
+
+### Delete an account
+
+**Tool**: `SALESFORCE_DELETE_ACCOUNT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `account_id` | string | **Yes** | Salesforce Account ID (prefix `001`) |
+
+**Warning**: Deleting an account may cascade-delete or orphan related contacts, tasks, and opportunities. Always confirm with the advisor before deleting.
+
+---
+
+## Contacts
+
+### Create a contact
+
+**Tool**: `SALESFORCE_CREATE_CONTACT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `LastName` | string | **Yes** | Contact's last name |
+| `FirstName` | string | No | Contact's first name |
+| `AccountId` | string | No | Parent Account ID (prefix `001`) — links the contact to an account |
+| `Email` | string | No | Email address |
+| `Phone` | string | No | Phone number |
+| `MobilePhone` | string | No | Mobile number |
+| `Title` | string | No | Job title |
+| `Department` | string | No | Department |
+| `MailingStreet` | string | No | Street address |
+| `MailingCity` | string | No | City |
+| `MailingState` | string | No | State/province |
+| `MailingPostalCode` | string | No | Zip code |
+| `MailingCountry` | string | No | Country |
+| `Description` | string | No | Notes |
+| `custom_fields` | object | No | Custom field API names to values |
+
+If the advisor mentions an account name, resolve the Account ID first with `SALESFORCE_SEARCH_ACCOUNTS`, then pass it as `AccountId`.
+
+**Example:**
+```json
+{
+  "LastName": "Kumar",
+  "FirstName": "Priya",
+  "AccountId": "001dL00001xrytEQAQ",
+  "Email": "priya.kumar@email.com",
+  "Phone": "(650) 555-9876",
+  "Title": "Managing Partner"
+}
+```
+
+### Search contacts
+
+**Tool**: `SALESFORCE_SEARCH_CONTACTS`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | No | Partial match on contact name |
+| `email` | string | No | Partial match on email address |
+| `phone` | string | No | Partial match on phone number |
+| `account_name` | string | No | Partial match on related account name |
+| `title` | string | No | Partial match on job title |
+| `department` | string | No | Partial match on department |
+| `mailing_city` | string | No | Partial match on mailing city |
+| `mailing_state` | string | No | Partial match on mailing state |
+| `limit` | integer | No | Max results (default 50, max 2000) |
+
+**Example — list all contacts for an account:**
+```json
+{
+  "account_name": "Kumar Family Trust"
+}
+```
+
+### Get a single contact
+
+**Tool**: `SALESFORCE_GET_CONTACT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `contact_id` | string | **Yes** | Salesforce Contact ID (prefix `003`) |
+
+### Update a contact
+
+**Tool**: `SALESFORCE_UPDATE_CONTACT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `contact_id` | string | **Yes** | Salesforce Contact ID (prefix `003`) |
+| `FirstName` | string | No | Updated first name |
+| `LastName` | string | No | Updated last name |
+| `Email` | string | No | Updated email |
+| `Phone` | string | No | Updated phone |
+| `MobilePhone` | string | No | Updated mobile |
+| `Title` | string | No | Updated job title |
+| `Department` | string | No | Updated department |
+| `MailingStreet` | string | No | Updated street |
+| `MailingCity` | string | No | Updated city |
+| `MailingState` | string | No | Updated state |
+| `MailingPostalCode` | string | No | Updated zip |
+| `MailingCountry` | string | No | Updated country |
+| `Description` | string | No | Updated notes |
+| `custom_fields` | object | No | Custom field updates |
+
+Only include fields you want to change. If the advisor refers to a contact by name, resolve the ID first with `SALESFORCE_SEARCH_CONTACTS`.
+
+### Delete a contact
+
+**Tool**: `SALESFORCE_DELETE_CONTACT`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `contact_id` | string | **Yes** | Salesforce Contact ID (prefix `003`) |
+
+Always confirm with the advisor before deleting a contact.
+
+---
+
+## Leads
+
+### Create a lead
 
 **Tool**: `SALESFORCE_CREATE_LEAD`
 
@@ -88,33 +304,18 @@ Use when a Twin Peaks advisor wants to add a new prospective client into the pip
 | `Industry` | string | No | e.g. "Technology", "Finance", "Healthcare" |
 | `Street` | string | No | Street address |
 | `City` | string | No | City |
-| `State` | string | No | State/province (e.g. "CA" or "California") |
+| `State` | string | No | State/province |
 | `PostalCode` | string | No | Zip code |
 | `Country` | string | No | Country |
 | `Website` | string | No | Company website |
 | `AnnualRevenue` | number | No | Estimated annual revenue |
 | `NumberOfEmployees` | integer | No | Employee count |
-| `CustomFields` | object | No | Custom field API names to values (keys typically end in `__c`) |
+| `CustomFields` | object | No | Custom field API names to values |
 | `allow_duplicates` | boolean | No | Default `false`. Set `true` to bypass duplicate detection |
 
-### Before creating a lead
+Always check for duplicates first with `SALESFORCE_SEARCH_LEADS` using `email` or `name`. If a match exists, inform the advisor and offer to update instead.
 
-Always check for duplicates first using `SALESFORCE_SEARCH_LEADS`:
-
-```json
-{ "email": "prospect@example.com" }
-```
-
-or by name:
-
-```json
-{ "name": "Jane Doe", "company": "Acme Corp" }
-```
-
-If a match is found, inform the advisor and offer to update the existing lead instead of creating a duplicate.
-
-### Example — create a new lead
-
+**Example:**
 ```json
 {
   "LastName": "Chen",
@@ -130,18 +331,53 @@ If a match is found, inform the advisor and offer to update the existing lead in
 }
 ```
 
-**Response parsing**: On success, the new Lead ID is at `response.data.id`. Use `SALESFORCE_GET_LEAD` with the returned ID if you need to confirm field persistence.
+**Response**: New Lead ID at `response.data.id`.
 
-### Pitfalls
+### Search leads
 
-- 400 validation errors mean org-required fields are missing or invalid. Check `data.errors` for specifics
-- If `allow_duplicates` is `false` (default) and duplicates exist, creation will fail — search first
+**Tool**: `SALESFORCE_SEARCH_LEADS`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `name` | string | No | Partial match on name |
+| `email` | string | No | Partial match on email |
+| `company` | string | No | Partial match on company |
+| `status` | string | No | Lead status filter |
+| `limit` | integer | No | Max results |
+
+### Get a single lead
+
+**Tool**: `SALESFORCE_GET_LEAD`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `lead_id` | string | **Yes** | Salesforce Lead ID (prefix `00Q`) |
+
+### Update a lead
+
+**Tool**: `SALESFORCE_UPDATE_LEAD`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `lead_id` | string | **Yes** | Salesforce Lead ID (prefix `00Q`) |
+
+Accepts the same fields as create (except `allow_duplicates`). Only include fields you want to change.
+
+### Delete a lead
+
+**Tool**: `SALESFORCE_DELETE_LEAD`
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `lead_id` | string | **Yes** | Salesforce Lead ID (prefix `00Q`) |
+
+Always confirm with the advisor before deleting.
 
 ---
 
-## Workflow 2: Create a Task
+## Tasks
 
-Use when a Twin Peaks advisor wants to create a follow-up, reminder, or action item tied to a client or lead.
+### Create a task
 
 **Tool**: `SALESFORCE_CREATE_TASK`
 
@@ -152,25 +388,16 @@ Use when a Twin Peaks advisor wants to create a follow-up, reminder, or action i
 | `priority` | string | No | Default: "Normal". Options: "High", "Normal", "Low" |
 | `activity_date` | string | No | Due date in YYYY-MM-DD format |
 | `description` | string | No | Detailed notes |
-| `what_id` | string | No | Related Account/Opportunity ID (prefix `001` for Account, `006` for Opportunity) |
+| `what_id` | string | No | Related Account (`001`) or Opportunity (`006`) ID |
 | `who_id` | string | No | Related Contact (`003`) or Lead (`00Q`) ID |
 | `owner_id` | string | No | User ID of task owner. Defaults to current user if omitted |
 | `is_reminder_set` | boolean | No | Whether to set a reminder |
-| `reminder_date_time` | string | No | ISO datetime for reminder (required if `is_reminder_set=true`) |
+| `reminder_date_time` | string | No | ISO datetime for reminder |
 | `custom_fields` | object | No | Custom field API names to values |
 
-### Before creating a task
+If the advisor mentions an account name, resolve the Account ID first with `SALESFORCE_SEARCH_ACCOUNTS`, then pass it as `what_id`. This ensures the task appears on the account's activity timeline.
 
-If the advisor mentions a client or account name (not an ID), resolve the Account ID first:
-
-1. Call `SALESFORCE_SEARCH_ACCOUNTS` with `name: "<account name>"`
-2. Extract the `Id` from the first matching record
-3. Pass that `Id` as `what_id`
-
-This ensures the task appears on the account's activity timeline. Omitting `what_id` creates a standalone task.
-
-### Example — create a follow-up task
-
+**Example:**
 ```json
 {
   "subject": "Schedule Q2 portfolio review with the Kumars",
@@ -182,71 +409,36 @@ This ensures the task appears on the account's activity timeline. Omitting `what
 }
 ```
 
----
-
-## Workflow 3: Query Task Status
-
-Use when a Twin Peaks advisor wants to see their open tasks, check what's due, or look up the status of specific tasks.
-
-### Option A: Search with filters (recommended)
+### Search tasks
 
 **Tool**: `SALESFORCE_SEARCH_TASKS`
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `status` | string | No | "Not Started", "In Progress", "Completed", "Waiting on someone else", "Deferred" |
-| `priority` | string | No | "High", "Normal", "Low" |
-| `is_closed` | boolean | No | `false` for open tasks, `true` for closed |
+| `status` | string | No | Task status filter |
+| `priority` | string | No | Priority filter |
+| `is_closed` | boolean | No | `false` for open, `true` for closed |
 | `assigned_to_name` | string | No | Partial match on owner name |
-| `account_name` | string | No | Partial match on related account name |
-| `contact_name` | string | No | Partial match on related contact name |
+| `account_name` | string | No | Partial match on related account |
+| `contact_name` | string | No | Partial match on related contact |
 | `subject` | string | No | Partial match on task subject |
 | `activity_date_from` | string | No | YYYY-MM-DD start date |
 | `activity_date_to` | string | No | YYYY-MM-DD end date |
 | `limit` | integer | No | Max results (default 50, max 2000) |
-| `fields` | string | No | Default: `Id,Subject,Status,Priority,ActivityDate,IsClosed,Description,OwnerId,Owner.Name,WhatId,What.Name,WhoId,Who.Name` |
 
-**Example — show my open tasks:**
+**Example — show open tasks:**
 ```json
-{
-  "is_closed": false,
-  "assigned_to_name": "<advisor's name>"
-}
+{ "is_closed": false, "assigned_to_name": "<advisor's name>" }
 ```
 
-**Example — high priority tasks due this week:**
-```json
-{
-  "priority": "High",
-  "is_closed": false,
-  "activity_date_from": "2026-03-09",
-  "activity_date_to": "2026-03-15"
-}
-```
-
-**Example — tasks for a specific client:**
-```json
-{
-  "account_name": "Kumar",
-  "is_closed": false
-}
-```
-
-### Option B: Custom SOQL (for advanced queries)
-
-**Tool**: `SALESFORCE_RUN_SOQL_QUERY`
-
-```
-query: "SELECT Id, Subject, Status, Priority, ActivityDate, What.Name, Who.Name FROM Task WHERE OwnerId = '<user_id>' AND IsClosed = false ORDER BY ActivityDate ASC"
-```
-
-### Updating task status
+### Update a task
 
 **Tool**: `SALESFORCE_UPDATE_TASK`
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | `task_id` | string | **Yes** | Salesforce Task ID |
+| `subject` | string | No | Updated subject |
 | `status` | string | No | New status value |
 | `priority` | string | No | New priority value |
 | `activity_date` | string | No | New due date (YYYY-MM-DD) |
@@ -255,9 +447,9 @@ query: "SELECT Id, Subject, Status, Priority, ActivityDate, What.Name, Who.Name 
 | `who_id` | string | No | Updated Contact/Lead ID |
 | `custom_fields` | object | No | Custom field updates |
 
-If the advisor refers to a task by name, resolve its ID first with `SALESFORCE_SEARCH_TASKS` using `subject: "<partial subject>"`.
+If the advisor refers to a task by name, resolve its ID first with `SALESFORCE_SEARCH_TASKS` using `subject`.
 
-### Marking a task complete
+### Complete a task
 
 **Tool**: `SALESFORCE_COMPLETE_TASK`
 
@@ -266,214 +458,60 @@ If the advisor refers to a task by name, resolve its ID first with `SALESFORCE_S
 | `task_id` | string | **Yes** | Salesforce Task ID |
 | `completion_notes` | string | No | Notes appended to description |
 
-This convenience wrapper sets Status to "Completed" and IsClosed to true.
+Sets Status to "Completed" and IsClosed to true.
 
----
+### Delete a task
 
-## Workflow 4: Find Contacts
-
-Use when a Twin Peaks advisor wants to search for contacts, look up a specific person, or list contacts associated with an account.
-
-### Step 1 — Search for contacts
-
-**Tool**: `SALESFORCE_SEARCH_CONTACTS`
+**Tool**: `SALESFORCE_DELETE_TASK`
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `name` | string | No | Partial match on contact name |
-| `email` | string | No | Partial match on email address |
-| `phone` | string | No | Partial match on phone number |
-| `account_name` | string | No | Partial match on related account name |
-| `title` | string | No | Partial match on job title |
-| `department` | string | No | Partial match on department |
-| `mailing_city` | string | No | Partial match on mailing city |
-| `mailing_state` | string | No | Partial match on mailing state |
-| `limit` | integer | No | Max results (default 50, max 2000) |
-| `fields` | string | No | Default: `Id,Name,FirstName,LastName,Email,Phone,Title,Department,Account.Name,MailingCity,MailingState` |
+| `task_id` | string | **Yes** | Salesforce Task ID |
 
-**Example — find a contact by name:**
-```json
-{
-  "name": "Sarah Chen"
-}
-```
-
-**Example — list all contacts for an account:**
-```json
-{
-  "account_name": "Kumar Family Trust"
-}
-```
-
-**Example — find contacts by email domain:**
-```json
-{
-  "email": "@anthropic.com"
-}
-```
-
-### Step 2 — Get full details for a specific contact
-
-**Tool**: `SALESFORCE_GET_CONTACT`
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `contact_id` | string | **Yes** | Salesforce Contact ID (prefix `003`) |
-
-### Alternative: Custom SOQL
-
-**Tool**: `SALESFORCE_RUN_SOQL_QUERY`
-
-```
-query: "SELECT Id, Name, Email, Phone, Title, Account.Name, MailingCity, MailingState FROM Contact WHERE Account.Name LIKE '%Kumar%' ORDER BY LastName ASC"
-```
-
-### Present results clearly
-
-Format results as a clean table or list showing: name, email, phone, title, and associated account. If the advisor is looking for a specific person, highlight the best match and confirm before proceeding with any follow-up action.
+Always confirm with the advisor before deleting. If the advisor refers to a task by name, resolve its ID first with `SALESFORCE_SEARCH_TASKS`.
 
 ---
 
-## Workflow 5: Update a Contact
+## Geographic Client Queries
 
-Use when a Twin Peaks advisor wants to modify an existing contact's information — email, phone, address, title, or any other field.
-
-### Step 1 — Find the contact to update
-
-If the advisor refers to a contact by name (not by ID), resolve the Contact ID first:
-
-1. Call `SALESFORCE_SEARCH_CONTACTS` with `name: "<contact name>"`
-2. If multiple results, present the matches and ask the advisor to confirm which one
-3. Extract the `Id` from the confirmed record
-
-**Example — resolve by name:**
-```json
-{
-  "name": "Sarah Chen"
-}
-```
-
-**Example — resolve by name + account:**
-```json
-{
-  "name": "Sarah",
-  "account_name": "Anthropic"
-}
-```
-
-### Step 2 — Update the contact
-
-**Tool**: `SALESFORCE_UPDATE_CONTACT`
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `contact_id` | string | **Yes** | Salesforce Contact ID (prefix `003`) |
-| `FirstName` | string | No | Updated first name |
-| `LastName` | string | No | Updated last name |
-| `Email` | string | No | Updated email address |
-| `Phone` | string | No | Updated phone number |
-| `MobilePhone` | string | No | Updated mobile number |
-| `Title` | string | No | Updated job title |
-| `Department` | string | No | Updated department |
-| `MailingStreet` | string | No | Updated street address |
-| `MailingCity` | string | No | Updated city |
-| `MailingState` | string | No | Updated state/province |
-| `MailingPostalCode` | string | No | Updated zip code |
-| `MailingCountry` | string | No | Updated country |
-| `Description` | string | No | Updated description/notes |
-| `custom_fields` | object | No | Custom field API names to values (keys typically end in `__c`) |
-
-Only include the fields you want to change — omitted fields are left untouched.
-
-**Example — update email and phone:**
-```json
-{
-  "contact_id": "003dL00001ABC123",
-  "Email": "sarah.chen@newdomain.com",
-  "Phone": "(650) 555-1234"
-}
-```
-
-**Example — update mailing address:**
-```json
-{
-  "contact_id": "003dL00001ABC123",
-  "MailingStreet": "123 Main St",
-  "MailingCity": "San Francisco",
-  "MailingState": "CA",
-  "MailingPostalCode": "94105"
-}
-```
-
-### Pitfalls
-
-- **MALFORMED_ID**: Ensure the contact ID is a valid 15/18-character Salesforce ID starting with `003`
-- **INVALID_FIELD**: A field name doesn't exist on the Contact object. Remove it and retry
-- If multiple contacts match the name, always confirm with the advisor before updating — never guess
-
----
-
-## Workflow 6: Geographic Client Queries
-
-Use when a Twin Peaks advisor wants to find clients near a location — for event planning, regional outreach, or proximity-based filtering. This is particularly useful for scenarios like "I'm hosting an event in Menlo Park, give me all clients within 20 miles."
+Use when a Twin Peaks advisor wants to find clients near a location — for event planning, regional outreach, or proximity-based filtering.
 
 ### Step 1 — Query accounts by city/state/region
 
-Use `SALESFORCE_RUN_SOQL_QUERY` to pull accounts in the target area:
+Use `SALESFORCE_RUN_SOQL_QUERY`:
 
 ```
-query: "SELECT Id, Name, Phone, BillingStreet, BillingCity, BillingState, BillingPostalCode, BillingCountry FROM Account WHERE BillingCity = 'Menlo Park' AND BillingState = 'CA'"
+query: "SELECT Id, Name, Phone, BillingStreet, BillingCity, BillingState, BillingPostalCode FROM Account WHERE BillingCity = 'Menlo Park' AND BillingState = 'CA'"
 ```
 
-For broader regional queries, use nearby cities:
+For broader queries, use `IN` with nearby cities:
 
 ```
-query: "SELECT Id, Name, Phone, BillingStreet, BillingCity, BillingState, BillingPostalCode FROM Account WHERE BillingState = 'CA' AND BillingCity IN ('Menlo Park', 'Palo Alto', 'Redwood City', 'Mountain View', 'San Mateo', 'Sunnyvale', 'Los Altos', 'Atherton', 'Woodside', 'Portola Valley', 'East Palo Alto', 'San Carlos', 'Belmont', 'Foster City', 'Fremont', 'Santa Clara', 'San Jose', 'Cupertino', 'Milpitas', 'Newark')"
+query: "SELECT Id, Name, Phone, BillingStreet, BillingCity, BillingState, BillingPostalCode FROM Account WHERE BillingState = 'CA' AND BillingCity IN ('Menlo Park', 'Palo Alto', 'Redwood City', 'Mountain View', 'San Mateo', 'Sunnyvale', 'Los Altos', 'Atherton')"
 ```
 
 ### Step 2 — For radius-based queries, calculate distances
 
-When the advisor asks for "within X miles," after pulling accounts with addresses, use the Composio Remote Workbench to calculate distances:
-
-```python
-from math import radians, cos, sin, asin, sqrt
-
-def haversine(lat1, lon1, lat2, lon2):
-    """Calculate distance in miles between two lat/lon points."""
-    lat1, lon1, lat2, lon2 = map(radians, [lat1, lon1, lat2, lon2])
-    dlat = lat2 - lat1
-    dlon = lon2 - lon1
-    a = sin(dlat/2)**2 + cos(lat1) * cos(lat2) * sin(dlon/2)**2
-    return 2 * 3956 * asin(sqrt(a))  # 3956 = Earth radius in miles
-```
-
-Use a geocoding lookup (via web search or a known city-to-lat/lon mapping) to convert city names to coordinates, then filter accounts that fall within the requested radius.
-
-### Step 3 — Present results clearly
-
-Format results as a clean list showing: client name, city, estimated distance, and phone number. Group by proximity (closest first). If the advisor mentions an event, suggest composing an outreach list.
+When the advisor asks for "within X miles," use the Composio Remote Workbench with the haversine formula to filter by distance after pulling accounts with addresses. Use a geocoding lookup to convert city names to coordinates.
 
 ### Common geographic queries
 
 | Advisor says | SOQL approach |
 |-----------|--------------|
 | "Clients in San Francisco" | `WHERE BillingCity = 'San Francisco'` |
-| "Clients in the Bay Area" | `WHERE BillingCity IN ('San Francisco', 'Oakland', 'San Jose', 'Palo Alto', ...)` |
 | "Clients in California" | `WHERE BillingState = 'CA'` |
 | "Clients within 20 miles of Menlo Park" | Query CA accounts, geocode, haversine filter |
 | "Clients on the East Coast" | `WHERE BillingState IN ('NY', 'NJ', 'CT', 'MA', 'PA', ...)` |
 
 ### Contacts variant
 
-If the advisor asks about contacts (people) rather than accounts (companies), query the Contact object instead:
+Query the Contact object for people instead of accounts:
 
 ```
 query: "SELECT Id, Name, Email, Phone, MailingCity, MailingState, Account.Name FROM Contact WHERE MailingCity = 'Menlo Park' AND MailingState = 'CA'"
 ```
 
 ### Leads variant
-
-For leads not yet converted to accounts:
 
 ```
 query: "SELECT Id, Name, Email, Phone, City, State, Company FROM Lead WHERE City = 'Menlo Park' AND State = 'CA' AND IsConverted = false"
@@ -483,9 +521,7 @@ query: "SELECT Id, Name, Email, Phone, City, State, Company FROM Lead WHERE City
 
 ## SOQL Quick Reference
 
-Key syntax rules for writing SOQL queries:
-
-- No `AS` keyword for aliases — use implicit: `SUM(Amount) TotalSales` not `SUM(Amount) AS TotalSales`
+- No `AS` keyword for aliases — use implicit: `SUM(Amount) TotalSales`
 - `FIELDS(ALL)` requires `LIMIT 200`
 - Wrap ID values in single quotes: `AccountId = '001...'`
 - Escape apostrophes with backslash: `Name = 'O\'Brien'`
@@ -509,7 +545,7 @@ Key syntax rules for writing SOQL queries:
 ## Error Handling
 
 - **400 INVALID_FIELD**: A field name doesn't exist on the object. Remove it and retry with fewer fields.
-- **REQUIRED_FIELD_MISSING**: You're missing a required field (e.g. `LastName` + `Company` for leads, `subject` for tasks).
+- **REQUIRED_FIELD_MISSING**: You're missing a required field (e.g. `LastName` + `Company` for leads, `subject` for tasks, `Name` for accounts).
 - **MALFORMED_ID**: An ID is not a valid 15/18-char Salesforce ID. Double-check the value.
 - **Duplicate rules**: If create fails due to org duplicate rules, search first and decide whether to update instead.
 - **Pagination**: If `response.data.done` is `false`, there are more records. Use `nextRecordsUrl` to fetch subsequent pages.
@@ -518,34 +554,27 @@ Key syntax rules for writing SOQL queries:
 
 ## Common Patterns
 
-### Resolve an account name to ID before creating a task
+### Resolve an account name to ID
 1. `SALESFORCE_SEARCH_ACCOUNTS` with `name: "<partial name>"`
 2. Extract `Id` from first match
-3. Pass as `what_id` in `SALESFORCE_CREATE_TASK`
+3. Pass as `what_id` (tasks), `AccountId` (contacts), etc.
 
-### Resolve a contact by name to ID before updating
+### Resolve a contact by name to ID
 1. `SALESFORCE_SEARCH_CONTACTS` with `name: "<partial name>"`
 2. Confirm with advisor if multiple matches
-3. Pass `Id` as `contact_id` in `SALESFORCE_UPDATE_CONTACT`
+3. Pass `Id` as `contact_id`
 
-### Resolve a task by subject to ID before updating
+### Resolve a task by subject to ID
 1. `SALESFORCE_SEARCH_TASKS` with `subject: "<partial subject>"`
 2. Extract `Id` from matching record
-3. Pass as `task_id` in `SALESFORCE_UPDATE_TASK` or `SALESFORCE_COMPLETE_TASK`
+3. Pass as `task_id`
 
 ### Check for duplicate leads before creating
-1. `SALESFORCE_SEARCH_LEADS` with `email: "<email>"` or `name: "<name>"`
+1. `SALESFORCE_SEARCH_LEADS` with `email` or `name`
 2. If results exist, inform advisor and offer to update instead
 3. If no results, proceed with `SALESFORCE_CREATE_LEAD`
 
----
-
-## Adding More Workflows
-
-Adding a new workflow to this skill is straightforward — just append a new `## Workflow N` section following the same pattern:
-
-1. State when to use it
-2. List the tool slug and parameter table
-3. Show any prerequisite steps (e.g. resolving a name to an ID)
-4. Include an example with realistic Twin Peaks data
-5. Note any pitfalls
+### Create an account and immediately add a task to it
+1. `SALESFORCE_CREATE_ACCOUNT` with `Name`
+2. Extract `Id` from `response.data.id`
+3. `SALESFORCE_CREATE_TASK` with `what_id` set to the new account ID

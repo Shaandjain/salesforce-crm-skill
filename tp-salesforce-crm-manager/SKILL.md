@@ -1,7 +1,7 @@
 ---
 name: tp-salesforce-crm-manager
 description: |
-  Salesforce CRM management via Composio for Twin Peaks Wealth advisors. Use this skill whenever the user asks to interact with Salesforce — creating leads, viewing tasks, creating tasks, updating task status, finding or updating contacts, querying client data, finding clients by location or geography, running SOQL queries, or any CRM-related workflow. Trigger on mentions of "Salesforce", "CRM", "leads", "contacts", "tasks", "SOQL", "pipeline", "my tasks", "create a lead", "add a lead", "update task status", "mark task complete", "find contact", "update contact", "search contacts", "list contacts", "clients near", "clients in", "event invites", "who lives near", or any request to read/write Salesforce data. Also trigger when the user says things like "what's on my plate", "show me my open tasks", "create a new lead", "find contacts for [account]", "update their email", "I'm hosting an event in [city]", or "find clients within X miles". This skill should be used even for simple Salesforce lookups — it contains the exact tool slugs and parameter schemas needed to execute reliably without guessing.
+  Salesforce CRM management via Composio for Twin Peaks Wealth advisors. Use for any Salesforce interaction: creating/searching leads, creating/querying/completing tasks, finding/updating contacts, geographic client queries, or running SOQL. Trigger on "Salesforce", "CRM", "leads", "contacts", "tasks", "SOQL", "pipeline", "create a lead", "my tasks", "find contact", "update contact", "clients near", "what's on my plate", or any CRM read/write request. Contains exact tool slugs and parameter schemas for reliable execution.
 ---
 
 # Twin Peaks Salesforce CRM Manager

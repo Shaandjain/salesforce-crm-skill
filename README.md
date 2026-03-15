@@ -6,10 +6,10 @@ A plug-and-play Claude Desktop skill that lets Twin Peaks Wealth advisors manage
 
 | Capability | Examples |
 |------------|----------|
-| **Accounts** | "Create a new account called Kumar Family Trust", "Update the billing address for Test 1" |
-| **Contacts** | "Find all contacts for the Kumar account", "Update Sarah's email to sarah@newdomain.com" |
-| **Leads** | "Add Sarah Chen from Anthropic as a hot lead", "Search for leads in San Francisco" |
-| **Tasks** | "Create a follow-up task for the Kumar account due next Friday", "What's on my plate?" |
+| **Accounts** | "Create a new account called Acme Corp", "Update the billing address for my test account" |
+| **Contacts** | "Find all contacts for the Acme account", "Update the email for my main contact" |
+| **Leads** | "Add a new lead from a partner referral, mark as warm", "Search for leads in San Francisco" |
+| **Tasks** | "Create a follow-up task for the Acme account due next Friday", "What's on my plate?" |
 | **Geographic Queries** | "Find all clients within 20 miles of Menlo Park", "Who are my clients in the Bay Area?" |
 | **SOQL** | "Run a SOQL query to find all accounts in New York" |
 
@@ -49,15 +49,15 @@ The skill handles duplicate checking, name-to-ID resolution, and SOQL constructi
 
 Once installed, just talk to Claude naturally:
 
-- "Create a new account called Test 1"
-- "Add a task to the Test 1 account saying test is running"
-- "Create a new lead for John Smith at Acme Corp, mark as warm"
+- "Create a new account called Acme Corp"
+- "Add a follow-up task to the Acme account due next week"
+- "Create a new lead from a partner referral, mark as warm"
 - "Show me all open tasks"
-- "Find contacts for the Kumar Family Trust"
-- "Update Sarah Chen's phone number to (650) 555-1234"
-- "Mark the Kumar follow-up task as complete"
+- "Find all contacts for the Acme account"
+- "Update the phone number for my main contact"
+- "Mark my follow-up task as complete"
 - "I'm hosting an event in San Francisco — who are my clients nearby?"
-- "Delete the Test 1 account"
+- "Delete the test account I created earlier"
 
 ## Extending the skill
 

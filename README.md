@@ -1,29 +1,27 @@
 # Salesforce CRM Manager — Claude Desktop Skill
 
-A plug-and-play Claude Desktop skill that lets you manage your Salesforce CRM using natural language. Create leads, manage tasks, query clients by location, and more — all through conversation.
+A plug-and-play Claude Desktop skill that lets Twin Peaks Wealth advisors manage Salesforce CRM using natural language. Create and manage accounts, contacts, leads, and tasks — all through conversation.
 
 ## What it does
 
-| Workflow | Examples |
-|----------|----------|
-| **Create Leads** | "Add Sarah Chen from Anthropic as a hot lead" |
-| **Create Tasks** | "Create a follow-up task for the Kumar account due next Friday" |
-| **Query Tasks** | "What's on my plate?", "Show me high priority tasks due this week" |
-| **Find Clients by Location** | "Find all clients within 20 miles of Menlo Park" |
+| Capability | Examples |
+|------------|----------|
+| **Accounts** | "Create a new account called Kumar Family Trust", "Update the billing address for Test 1" |
+| **Contacts** | "Find all contacts for the Kumar account", "Update Sarah's email to sarah@newdomain.com" |
+| **Leads** | "Add Sarah Chen from Anthropic as a hot lead", "Search for leads in San Francisco" |
+| **Tasks** | "Create a follow-up task for the Kumar account due next Friday", "What's on my plate?" |
+| **Geographic Queries** | "Find all clients within 20 miles of Menlo Park", "Who are my clients in the Bay Area?" |
+| **SOQL** | "Run a SOQL query to find all accounts in New York" |
 
 ## How to install
 
-### Option A: Add as a Project
+1. [Download this repo as a ZIP](../../archive/refs/heads/main.zip)
+2. Unzip it and find the file at `tp-salesforce-crm-manager/SKILL.md`
+3. Open **Claude Desktop** → **Settings** → **Skills**
+4. Click **Upload skill** and select the `SKILL.md` file
+5. That's it — Claude will now use this skill automatically when you ask about Salesforce
 
-1. Download or clone this repo
-2. Open **Claude Desktop** and create a new Project
-3. Add the contents of the `tp-salesforce-crm-manager/` folder as project knowledge — upload each `SKILL.md` file as a project file
-
-### Option B: Copy into your filesystem
-
-1. Clone this repo or download it as a ZIP
-2. Copy the `tp-salesforce-crm-manager/` folder somewhere accessible on your machine
-3. In Claude Desktop, add the `SKILL.md` files as project knowledge so Claude can reference them during conversations
+> **Note**: You only need the single `SKILL.md` file. Everything else in the repo (this README, etc.) is just documentation.
 
 ## Prerequisites
 
@@ -32,34 +30,38 @@ This skill uses **Composio** to connect to Salesforce. You need:
 1. A **Composio** account with a Salesforce integration set up
 2. The Composio MCP server configured in your Claude Desktop settings (`claude_desktop_config.json`), with server name `mcp-config-5-gpex`
 
-If you're using a different MCP server name, update the references in the SKILL.md files to match your setup.
+If you're using a different MCP server name, update the references in `SKILL.md` to match your setup.
 
-## Skill structure
+## What's covered
 
-```
-tp-salesforce-crm-manager/
-  SKILL.md            # Main skill — setup, tool reference, SOQL guide
-  create-lead/
-    SKILL.md          # Create and search leads
-  create-task/
-    SKILL.md          # Create tasks linked to accounts
-  query-tasks/
-    SKILL.md          # Search, update, and complete tasks
-  geo-queries/
-    SKILL.md          # Find clients by city, state, or radius
-```
+The skill provides full CRUD (create, read, update, delete) for each Salesforce object:
+
+- **Accounts** — create, search, get, update, delete
+- **Contacts** — create, search, get, update, delete
+- **Leads** — create, search, get, update, delete
+- **Tasks** — create, search, update, complete, delete
+- **Geographic queries** — find clients by city, state, or radius
+- **Raw SOQL** — run any SOQL query directly
+
+The skill handles duplicate checking, name-to-ID resolution, and SOQL construction automatically so you don't have to think about Salesforce internals.
 
 ## Usage
 
 Once installed, just talk to Claude naturally:
 
+- "Create a new account called Test 1"
+- "Add a task to the Test 1 account saying test is running"
 - "Create a new lead for John Smith at Acme Corp, mark as warm"
 - "Show me all open tasks"
+- "Find contacts for the Kumar Family Trust"
+- "Update Sarah Chen's phone number to (650) 555-1234"
 - "Mark the Kumar follow-up task as complete"
 - "I'm hosting an event in San Francisco — who are my clients nearby?"
-- "Run a SOQL query to find all accounts in New York"
+- "Delete the Test 1 account"
 
-The skill handles duplicate checking, account-to-ID resolution, and SOQL query construction automatically.
+## Extending the skill
+
+Adding new operations is straightforward — open `SKILL.md` and append to the relevant object section following the same pattern: tool slug, parameter table, example, pitfalls. See the "Common Patterns" section at the bottom of the skill for multi-step workflow templates.
 
 ## License
 
